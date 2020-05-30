@@ -4,7 +4,21 @@ import urllib.parse
 import re
 import csv
 
+def scrape_episodes():
+    base_url = 'https://transcripts.fandom.com'
+    url = 'https://transcripts.fandom.com/wiki/Peep_Show'
+    req = urllib.request.urlopen(url)
+    page = req.read().decode('utf-8')
+    soup = BeautifulSoup(page,'html.parser')
 
+    trans = soup.find(id='mw-content-text')
+    ols = trans.find_all('ol')
+
+    for ol in ols:
+        lis = ol.find_all('li')
+        for li in lis:
+            link = li.find('a')['href'] 
+            print(base_url+link)
 def scrape_thoughts(url):
     out = []
 
@@ -30,12 +44,10 @@ def scrape_thoughts(url):
             out.append([title,character,thought])
     return out
 
-csvfile = open('thoughts.csv', 'a')
-csvwriter = csv.writer(csvfile)
+#  csvfile = open('thoughts.csv', 'a')
+#  csvwriter = csv.writer(csvfile)
+#  url = "https://transcripts.fandom.com/wiki/University_Challenge"
+#  thoughts = scrape_thoughts(url)
+#  csvwriter.writerows(thoughts)
 
-
-
-url = "https://transcripts.fandom.com/wiki/University_Challenge"
-thoughts = scrape_thoughts(url)
-
-csvwriter.writerows(thoughts)
+test = scrape_episodes()
