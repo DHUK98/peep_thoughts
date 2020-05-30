@@ -55,7 +55,10 @@ with open('thoughts.csv', 'a') as csvfile:
     csvwriter = csv.writer(csvfile)
     urls = scrape_episodes()
     print("urls loaded")
+    print()
     for url in urls:
         print(f"scraping {url}")
         thoughts = scrape_thoughts(url)
+        print(f"scraped {len(thoughts)} thoughts")
+        print()
         csvwriter.writerows(thoughts)
