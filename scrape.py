@@ -6,6 +6,8 @@ import csv
 
 
 def scrape_thoughts(url):
+    out = []
+
     req = urllib.request.urlopen(url)
     page = req.read().decode('utf-8')
     soup = BeautifulSoup(page,'html.parser')
@@ -13,9 +15,27 @@ def scrape_thoughts(url):
     trans = soup.find(id='mw-content-text')
     ps = trans.find_all('p')
    
-    title = ps[0].find('b').get_text()
+    title = ps[0].find('b').get_text().strip()
     print(title)
-    #  for p in ps:
-        #  print (p)
+    #  print(ps[1:])
+    for p in ps[1:]:
+        text = p.get_text().split(':')
+        if len(text) < 2:
+            continue
+        character = text[0].strip()
+        line = text[1]
+        re_search = re.finditer(r'\(.*?\)', line)
+        for item in re_search:
+            thought = item.group(0).strip('()')
+            out.append([title,character,thought])
+    return out
+
+csvfile = open('thoughts.csv', 'a')
+csvwriter = csv.writer(csvfile)
+
+
+
 url = "https://transcripts.fandom.com/wiki/University_Challenge"
-scrape_thoughts(url)
+thoughts = scrape_thoughts(url)
+
+csvwriter.writerows(thoughts)
