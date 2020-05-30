@@ -5,6 +5,8 @@ import re
 import csv
 
 def scrape_episodes():
+    out = [] 
+
     base_url = 'https://transcripts.fandom.com'
     url = 'https://transcripts.fandom.com/wiki/Peep_Show'
     req = urllib.request.urlopen(url)
@@ -18,7 +20,11 @@ def scrape_episodes():
         lis = ol.find_all('li')
         for li in lis:
             link = li.find('a')['href'] 
-            print(base_url+link)
+            out.append(base_url+link)         
+    
+    return out
+
+
 def scrape_thoughts(url):
     out = []
 
@@ -44,10 +50,12 @@ def scrape_thoughts(url):
             out.append([title,character,thought])
     return out
 
-#  csvfile = open('thoughts.csv', 'a')
-#  csvwriter = csv.writer(csvfile)
-#  url = "https://transcripts.fandom.com/wiki/University_Challenge"
-#  thoughts = scrape_thoughts(url)
-#  csvwriter.writerows(thoughts)
 
-test = scrape_episodes()
+with open('thoughts.csv', 'a') as csvfile:
+    csvwriter = csv.writer(csvfile)
+    urls = scrape_episodes()
+    print("urls loaded")
+    for url in urls:
+        print(f"scraping {url}")
+        thoughts = scrape_thoughts(url)
+        csvwriter.writerows(thoughts)
